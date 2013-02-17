@@ -60,7 +60,7 @@ public class SpacePanel extends JPanel implements Runnable {
     private int xClick, yClick;
     private int xSelectionRectangle, ySelectionRectangle;
     private Rectangle selectionRectangle = new Rectangle();
-    private int numberOfShips = 5;
+    private int numberOfShips = 45;
 
     public SpacePanel(SpaceChase wc, long period) {
         wcTop = wc;
@@ -136,6 +136,9 @@ public class SpacePanel extends JPanel implements Runnable {
     }
 
     private void mouseLeftClick(int x, int y) {
+        for (SpaceShip spaceShip : spaceShipList) {
+            spaceShip.setSelected(false);
+        }
         for (int i = spaceShipList.size() - 1; i >= 0; i--) {
              if(spaceShipList.get(i).clickedOn(x, y)) {
                  break;
