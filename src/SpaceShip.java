@@ -108,4 +108,10 @@ public class SpaceShip {
 
         return point2DList;
     }
+
+    public void insideSelectionRectangle(Rectangle selectionRectangle) {
+        if(selectionRectangle.contains(xPosition, yPosition, xBaseSize * scale, yBaseSize * scale)) {
+            setSelected(true);
+        }
+    }
 }

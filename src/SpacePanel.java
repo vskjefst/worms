@@ -58,6 +58,7 @@ public class SpacePanel extends JPanel implements Runnable {
 
     private int xClick, yClick;
     private int xSelectionRectangle, ySelectionRectangle;
+    private Rectangle selectionRectangle = new Rectangle();
 
     public SpacePanel(SpaceChase wc, long period) {
         wcTop = wc;
@@ -79,17 +80,20 @@ public class SpacePanel extends JPanel implements Runnable {
                 xClick = e.getX();
                 yClick = e.getY();
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    System.out.println("Mouse:Left");
                     mouseLeftClick(xClick, yClick);
                 } else if (e.getButton() == MouseEvent.BUTTON2) {
-                    System.out.println("Mouse:Middle");
                     mouseMiddleClick(xClick, yClick);
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
-                    System.out.println("Mouse:Right");
                     mouseRightClick(xClick, yClick);
-                } else if (e.getButton() == MouseEvent.MOUSE_RELEASED) {
-                    System.out.println("Mouse:Released");
                 }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                for (SpaceShip spaceShip : spaceShipList) {
+                    spaceShip.insideSelectionRectangle(selectionRectangle);
+                }
+                xSelectionRectangle = ySelectionRectangle = 0;
             }
         });
 
@@ -98,7 +102,6 @@ public class SpacePanel extends JPanel implements Runnable {
             public void mouseDragged(MouseEvent e) {
                 xSelectionRectangle = e.getX();
                 ySelectionRectangle = e.getY();
-                System.out.println(xClick + ", " + yClick + ", " + e.getX() + ", " + e.getY());
             }
         });
 
@@ -280,7 +283,17 @@ public class SpacePanel extends JPanel implements Runnable {
         dbg.drawString("Average FPS/UPS: " + df.format(averageFPS) + ", " + df.format(averageUPS), 20, 25);
 
         if(xSelectionRectangle != 0 || ySelectionRectangle != 0) {
-            dbg.drawRect(xClick, yClick, xSelectionRectangle - xClick, ySelectionRectangle - yClick);
+            if(xSelectionRectangle > xClick && ySelectionRectangle > yClick) {
+                selectionRectangle = new Rectangle(xClick, yClick, xSelectionRectangle - xClick, ySelectionRectangle - yClick);
+            } else if(xSelectionRectangle < xClick && ySelectionRectangle > yClick) {
+                selectionRectangle = new Rectangle(xSelectionRectangle, yClick, xClick - xSelectionRectangle, ySelectionRectangle - yClick);
+            } else if(xSelectionRectangle < xClick && ySelectionRectangle < yClick) {
+                selectionRectangle = new Rectangle(xSelectionRectangle, ySelectionRectangle, xClick - xSelectionRectangle, yClick - ySelectionRectangle);
+            } else {
+                selectionRectangle = new Rectangle(xClick, ySelectionRectangle, xSelectionRectangle - xClick, yClick - ySelectionRectangle);
+            }
+
+            dbg.drawRect(selectionRectangle.x, selectionRectangle.y, selectionRectangle.width, selectionRectangle.height);
         }
 
         dbg.setColor(Color.black);
