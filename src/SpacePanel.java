@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Random;
 
 public class SpacePanel extends JPanel implements Runnable {
-    private static final int PWIDTH = 500;
-    private static final int PHEIGHT = 400;
+    private static final int PWIDTH = 1024;
+    private static final int PHEIGHT = 768;
     private static long MAX_STATS_INTERVAL = 1000000000L;
     private static final int NO_DELAYS_PER_YIELD = 16;
     private static int MAX_FRAME_SKIPS = 5;
@@ -60,7 +60,7 @@ public class SpacePanel extends JPanel implements Runnable {
     private int xClick, yClick;
     private int xSelectionRectangle, ySelectionRectangle;
     private Rectangle selectionRectangle = new Rectangle();
-    private int numberOfShips = 20;
+    private int numberOfShips = 5;
 
     public SpacePanel(SpaceChase wc, long period) {
         wcTop = wc;
@@ -136,8 +136,10 @@ public class SpacePanel extends JPanel implements Runnable {
     }
 
     private void mouseLeftClick(int x, int y) {
-        for (SpaceShip spaceShip : spaceShipList) {
-            spaceShip.clickedOn(x, y);
+        for (int i = spaceShipList.size() - 1; i >= 0; i--) {
+             if(spaceShipList.get(i).clickedOn(x, y)) {
+                 break;
+             }
         }
     }
 

@@ -53,12 +53,20 @@ public class SpaceShip {
         debug = "(" + index + ") current position: [" + xPosition + "," + yPosition + "]";
     }
 
-    public void clickedOn(final int x, final int y) {
+    public boolean clickedOn(final int x, final int y) {
         if((x >= xPosition && x <= (xPosition + (xBaseSize * scale)))
                 && (y >= yPosition && y <= (yPosition + (yBaseSize * scale)))) {
             setSelected(true);
         } else {
             setSelected(false);
+        }
+
+        return isSelected();
+    }
+
+    public void insideSelectionRectangle(Rectangle selectionRectangle) {
+        if(selectionRectangle.contains(xPosition, yPosition, xBaseSize * scale, yBaseSize * scale)) {
+            setSelected(true);
         }
     }
 
@@ -106,11 +114,5 @@ public class SpaceShip {
         }
 
         return point2DList;
-    }
-
-    public void insideSelectionRectangle(Rectangle selectionRectangle) {
-        if(selectionRectangle.contains(xPosition, yPosition, xBaseSize * scale, yBaseSize * scale)) {
-            setSelected(true);
-        }
     }
 }
