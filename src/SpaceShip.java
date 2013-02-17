@@ -37,7 +37,6 @@ public class SpaceShip {
     public void setDesiredPosition(int xDesiredPosition, int yDesiredPosition) {
         this.xNewDesiredPosition = xDesiredPosition;
         this.yNewDesiredPosition = yDesiredPosition;
-        System.out.println("New desired position: " + xNewDesiredPosition + "," + yNewDesiredPosition);
     }
 
     public void move() {

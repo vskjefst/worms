@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SpacePanel extends JPanel implements Runnable {
     private static final int PWIDTH = 500;
@@ -59,12 +60,16 @@ public class SpacePanel extends JPanel implements Runnable {
     private int xClick, yClick;
     private int xSelectionRectangle, ySelectionRectangle;
     private Rectangle selectionRectangle = new Rectangle();
+    private int numberOfShips = 20;
 
     public SpacePanel(SpaceChase wc, long period) {
         wcTop = wc;
 
-        spaceShipList.add(new SpaceShip(10, 10, 0));
-        spaceShipList.add(new SpaceShip(100, 100, 1));
+        Random random = new Random();
+        for (int i = 0; i < numberOfShips; i++) {
+            spaceShipList.add(new SpaceShip(random.nextInt(PWIDTH - 10), random.nextInt(PHEIGHT - 10), i));
+        }
+
         this.period = period;
 
         setBackground(Color.white);
@@ -93,6 +98,7 @@ public class SpacePanel extends JPanel implements Runnable {
                 for (SpaceShip spaceShip : spaceShipList) {
                     spaceShip.insideSelectionRectangle(selectionRectangle);
                 }
+                selectionRectangle = new Rectangle();
                 xSelectionRectangle = ySelectionRectangle = 0;
             }
         });
