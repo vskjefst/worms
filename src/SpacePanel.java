@@ -61,6 +61,7 @@ public class SpacePanel extends JPanel implements Runnable {
     private int xSelectionRectangle, ySelectionRectangle;
     private Rectangle selectionRectangle = new Rectangle();
     private int numberOfShips = 45;
+    private boolean leftMouseButtonPressed;
 
     public SpacePanel(SpaceChase wc, long period) {
         wcTop = wc;
@@ -81,9 +82,7 @@ public class SpacePanel extends JPanel implements Runnable {
 
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent e) {
-                xClick = e.getX();
-                yClick = e.getY();
+            public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     mouseLeftClick(xClick, yClick);
                 } else if (e.getButton() == MouseEvent.BUTTON2) {
@@ -94,20 +93,35 @@ public class SpacePanel extends JPanel implements Runnable {
             }
 
             @Override
-            public void mouseReleased(MouseEvent e) {
-                for (SpaceShip spaceShip : spaceShipList) {
-                    spaceShip.insideSelectionRectangle(selectionRectangle);
+            public void mousePressed(MouseEvent e) {
+                xClick = e.getX();
+                yClick = e.getY();
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    leftMouseButtonPressed = true;
                 }
-                selectionRectangle = new Rectangle();
-                xSelectionRectangle = ySelectionRectangle = 0;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if(e.getButton() == MouseEvent.BUTTON1) {
+                    leftMouseButtonPressed = false;
+                    for (SpaceShip spaceShip : spaceShipList) {
+                        spaceShip.setSelected(false);
+                        spaceShip.insideSelectionRectangle(selectionRectangle);
+                    }
+                    selectionRectangle = new Rectangle();
+                    xSelectionRectangle = ySelectionRectangle = 0;
+                }
             }
         });
 
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                xSelectionRectangle = e.getX();
-                ySelectionRectangle = e.getY();
+                if(leftMouseButtonPressed) {
+                    xSelectionRectangle = e.getX();
+                    ySelectionRectangle = e.getY();
+                }
             }
         });
 
