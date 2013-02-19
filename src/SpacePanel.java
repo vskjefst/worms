@@ -112,8 +112,6 @@ public class SpacePanel extends JPanel implements Runnable {
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     mouseLeftClick(xClick, yClick);
-                } else if (e.getButton() == MouseEvent.BUTTON2) {
-                    mouseMiddleClick(xClick, yClick);
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
                     mouseRightClick(xClick, yClick);
                 }
@@ -160,9 +158,6 @@ public class SpacePanel extends JPanel implements Runnable {
         }
     }
 
-    private void mouseMiddleClick(final double x, final double y) {
-
-    }
 
     private void mouseLeftClick(double x, double y) {
         for (SpaceShip spaceShip : spaceShipList) {
@@ -218,7 +213,7 @@ public class SpacePanel extends JPanel implements Runnable {
         long overSleepTime = 0L;
         int noDelays = 0;
         long excess = 0L;
-        int skips = 0;
+        int skips;
 
         gameStartTime = System.nanoTime();
         prevStatsTime = gameStartTime;
