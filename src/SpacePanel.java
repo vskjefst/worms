@@ -54,12 +54,11 @@ public class SpacePanel extends JPanel implements Runnable {
     private Graphics2D dbg;
     private Image dbImage = null;
 
-    private int xClick, yClick;
-    private int xSelectionRectangle, ySelectionRectangle;
+    private double xClick, yClick;
+    private double xSelectionRectangle, ySelectionRectangle;
     private Rectangle selectionRectangle = new Rectangle();
     private int numberOfShips = 45;
     private boolean leftMouseButtonPressed;
-    private double scale = 1.0;
 
     public SpacePanel(SpaceChase wc, long period) {
         wcTop = wc;
@@ -92,8 +91,9 @@ public class SpacePanel extends JPanel implements Runnable {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                xClick = e.getX();
-                yClick = e.getY();
+                xClick = scaleX(e.getX());
+                yClick = scaleY(e.getY());
+                System.out.println("CLICK: " + xClick + ", " + yClick);
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     leftMouseButtonPressed = true;
                 }
@@ -101,7 +101,7 @@ public class SpacePanel extends JPanel implements Runnable {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                if(e.getButton() == MouseEvent.BUTTON1) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
                     leftMouseButtonPressed = false;
                     for (SpaceShip spaceShip : spaceShipList) {
                         spaceShip.setSelected(false);
@@ -116,9 +116,9 @@ public class SpacePanel extends JPanel implements Runnable {
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                if(leftMouseButtonPressed) {
-                    xSelectionRectangle = e.getX();
-                    ySelectionRectangle = e.getY();
+                if (leftMouseButtonPressed) {
+                    xSelectionRectangle = scaleX(e.getX());
+                    ySelectionRectangle = scaleY(e.getY());
                 }
             }
         });
@@ -126,8 +126,7 @@ public class SpacePanel extends JPanel implements Runnable {
         addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                System.out.println(e.getUnitsToScroll());
-                scale = scale - ((float) e.getUnitsToScroll() / 10000);
+                double scale = 1 - ((float) e.getUnitsToScroll() / 100);
                 dbg.scale(scale, scale);
                 System.out.println(scale);
             }
@@ -145,7 +144,15 @@ public class SpacePanel extends JPanel implements Runnable {
         }
     }  // end of SpacePanel()
 
-    private void mouseRightClick(final int x, final int y) {
+    private double scaleX(int x) {
+        return x / dbg.getTransform().getScaleX();
+    }
+
+    private double scaleY(int y) {
+        return y / dbg.getTransform().getScaleY();
+    }
+
+    private void mouseRightClick(final double x, final double y) {
         for (SpaceShip spaceShip : spaceShipList) {
             if (spaceShip.isSelected()) {
                 spaceShip.setDesiredPosition(x, y);
@@ -153,11 +160,11 @@ public class SpacePanel extends JPanel implements Runnable {
         }
     }
 
-    private void mouseMiddleClick(final int x, final int y) {
+    private void mouseMiddleClick(final double x, final double y) {
 
     }
 
-    private void mouseLeftClick(int x, int y) {
+    private void mouseLeftClick(double x, double y) {
         for (SpaceShip spaceShip : spaceShipList) {
             spaceShip.setSelected(false);
         }
@@ -317,13 +324,13 @@ public class SpacePanel extends JPanel implements Runnable {
 
         if(xSelectionRectangle != 0 || ySelectionRectangle != 0) {
             if(xSelectionRectangle > xClick && ySelectionRectangle > yClick) {
-                selectionRectangle = new Rectangle(xClick, yClick, xSelectionRectangle - xClick, ySelectionRectangle - yClick);
+                selectionRectangle = new Rectangle((int) xClick, (int) yClick, (int) (xSelectionRectangle - xClick), (int) (ySelectionRectangle - yClick));
             } else if(xSelectionRectangle < xClick && ySelectionRectangle > yClick) {
-                selectionRectangle = new Rectangle(xSelectionRectangle, yClick, xClick - xSelectionRectangle, ySelectionRectangle - yClick);
+                selectionRectangle = new Rectangle((int) xSelectionRectangle, (int) yClick, (int) (xClick - xSelectionRectangle), (int) (ySelectionRectangle - yClick));
             } else if(xSelectionRectangle < xClick && ySelectionRectangle < yClick) {
-                selectionRectangle = new Rectangle(xSelectionRectangle, ySelectionRectangle, xClick - xSelectionRectangle, yClick - ySelectionRectangle);
+                selectionRectangle = new Rectangle((int) xSelectionRectangle, (int) ySelectionRectangle, (int) (xClick - xSelectionRectangle), (int) (yClick - ySelectionRectangle));
             } else {
-                selectionRectangle = new Rectangle(xClick, ySelectionRectangle, xSelectionRectangle - xClick, yClick - ySelectionRectangle);
+                selectionRectangle = new Rectangle((int) xClick, (int) ySelectionRectangle, (int) (xSelectionRectangle - xClick), (int) (yClick - ySelectionRectangle));
             }
 
             dbg.drawRect(selectionRectangle.x, selectionRectangle.y, selectionRectangle.width, selectionRectangle.height);

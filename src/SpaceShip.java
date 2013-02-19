@@ -5,7 +5,7 @@ import java.util.List;
 
 public class SpaceShip {
 
-    private int xPosition, yPosition, xDesiredPosition, yDesiredPosition, xNewDesiredPosition, yNewDesiredPosition;
+    private double xPosition, yPosition, xDesiredPosition, yDesiredPosition, xNewDesiredPosition, yNewDesiredPosition;
     private int xBaseSize = 10, yBaseSize = 10;
     private int scale = 1;
     private String debug = "";
@@ -25,7 +25,7 @@ public class SpaceShip {
         } else {
             g.setColor(Color.BLACK);
         }
-        g.fillRect(xPosition, yPosition, xBaseSize * scale, yBaseSize * scale);
+        g.fillRect((int) xPosition, (int) yPosition, (int) (xBaseSize * scale), (int) (yBaseSize * scale));
         g.drawString(debug, 20, 40 + (15 * index));
     }
 
@@ -34,7 +34,7 @@ public class SpaceShip {
         this.yPosition = (int) position.getY();
     }
 
-    public void setDesiredPosition(int xDesiredPosition, int yDesiredPosition) {
+    public void setDesiredPosition(double xDesiredPosition, double yDesiredPosition) {
         this.xNewDesiredPosition = xDesiredPosition;
         this.yNewDesiredPosition = yDesiredPosition;
     }
@@ -43,7 +43,7 @@ public class SpaceShip {
         if((xDesiredPosition != xNewDesiredPosition || yDesiredPosition != yNewDesiredPosition)) {
             xDesiredPosition = xNewDesiredPosition;
             yDesiredPosition = yNewDesiredPosition;
-            currentPath = calculatePath(xPosition, yPosition, xDesiredPosition, yDesiredPosition);
+            currentPath = calculatePath((int) xPosition, (int) yPosition, (int) xDesiredPosition, (int) yDesiredPosition);
         } else if(!currentPath.isEmpty()) {
             Point2D point2D = currentPath.get(0);
             currentPath.remove(point2D);
@@ -53,7 +53,7 @@ public class SpaceShip {
         debug = "(" + index + ") current position: [" + xPosition + "," + yPosition + "]";
     }
 
-    public boolean clickedOn(final int x, final int y) {
+    public boolean clickedOn(final double x, final double y) {
         if((x >= xPosition && x <= (xPosition + (xBaseSize * scale)))
                 && (y >= yPosition && y <= (yPosition + (yBaseSize * scale)))) {
             setSelected(true);
