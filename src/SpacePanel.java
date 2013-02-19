@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +59,7 @@ public class SpacePanel extends JPanel implements Runnable {
     private Rectangle selectionRectangle = new Rectangle();
     private int numberOfShips = 45;
     private boolean leftMouseButtonPressed;
+    private double scale = 1.0;
 
     public SpacePanel(SpaceChase wc, long period) {
         wcTop = wc;
@@ -122,6 +120,16 @@ public class SpacePanel extends JPanel implements Runnable {
                     xSelectionRectangle = e.getX();
                     ySelectionRectangle = e.getY();
                 }
+            }
+        });
+
+        addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                System.out.println(e.getUnitsToScroll());
+                scale = scale - ((float) e.getUnitsToScroll() / 10000);
+                dbg.scale(scale, scale);
+                System.out.println(scale);
             }
         });
 
