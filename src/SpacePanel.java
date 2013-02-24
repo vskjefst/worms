@@ -51,6 +51,8 @@ public class SpacePanel extends JPanel implements Runnable {
     private Rectangle selectionRectangle = new Rectangle();
     private int numberOfShips = 45;
     private boolean leftMouseButtonPressed;
+    private boolean rightMouseButtonPressed;
+    private final double MAX_SCALE = 2, MIN_SCALE = 1;
 
     public SpacePanel(SpaceChase wc, long periodBetweenDrawing) {
         wcTop = wc;
@@ -88,8 +90,16 @@ public class SpacePanel extends JPanel implements Runnable {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 double scale = 1 - ((float) e.getUnitsToScroll() / 100);
-                dbg.scale(scale, scale);
-                System.out.println(scale);
+                double newScale = dbg.getTransform().getScaleX() * scale;
+                if(newScale > MIN_SCALE && newScale < MAX_SCALE) {
+                    dbg.scale(scale, scale);
+                } else if (newScale < MIN_SCALE) {
+                    scale = MIN_SCALE / dbg.getTransform().getScaleX();
+                    dbg.scale(scale, scale);
+                } else {
+                    scale = MAX_SCALE / dbg.getTransform().getScaleX();
+                    dbg.scale(scale, scale);
+                }
             }
         });
     }
@@ -101,6 +111,16 @@ public class SpacePanel extends JPanel implements Runnable {
                 if (leftMouseButtonPressed) {
                     xSelectionRectangle = scaleX(e.getX());
                     ySelectionRectangle = scaleY(e.getY());
+                } else if (rightMouseButtonPressed) {
+                    double xTranslate = xClick - e.getX();
+                    int yTranslate = 1;
+                    if(e.getX() < xClick)
+                        xTranslate = xTranslate * -1;
+                    if(e.getY() < yClick)
+                        yTranslate = yTranslate * -1;
+                    dbg.translate(xTranslate, 0);
+//                    System.out.println(dbg.getTransform().getTranslateX() + ", " + dbg.getTransform().getTranslateY());
+                    System.out.println(e.getX() + ", " + e.getY());
                 }
             }
         });
@@ -124,6 +144,8 @@ public class SpacePanel extends JPanel implements Runnable {
                 System.out.println("CLICK: " + xClick + ", " + yClick);
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     leftMouseButtonPressed = true;
+                } else if(e.getButton() == MouseEvent.BUTTON3) {
+                    rightMouseButtonPressed = true;
                 }
             }
 
@@ -137,17 +159,19 @@ public class SpacePanel extends JPanel implements Runnable {
                     }
                     selectionRectangle = new Rectangle();
                     xSelectionRectangle = ySelectionRectangle = 0;
+                } else if(e.getButton() == MouseEvent.BUTTON3) {
+                    rightMouseButtonPressed = false;
                 }
             }
         });
     }
 
     private double scaleX(int x) {
-        return x / dbg.getTransform().getScaleX();
+        return (x - dbg.getTransform().getTranslateX()) / dbg.getTransform().getScaleX();
     }
 
     private double scaleY(int y) {
-        return y / dbg.getTransform().getScaleY();
+        return (y - dbg.getTransform().getTranslateY()) / dbg.getTransform().getScaleY();
     }
 
     private void mouseRightClick(final double x, final double y) {
